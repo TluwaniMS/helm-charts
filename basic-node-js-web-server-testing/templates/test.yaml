@@ -1,0 +1,36 @@
+apiVersion: tests.testkube.io/v3
+kind: Test
+metadata:
+  name: '{{ .Values.prBranchName }}-playwright-testing'
+  namespace: testkube
+spec:
+  type: playwright/test
+  content:
+    type: git
+    repository:
+      type: git
+      uri: https://github.com/TluwaniMS/basic-playwright-learning
+      branch: master
+  executionRequest:
+    variables:
+      BASE_URL:
+        name: BASE_URL
+        type: basic
+        valueFrom:
+          configMapKeyRef:
+            name: '{{ .Values.prBranchName }}'
+            key: base_url
+      USER_NAME:
+        name: USER_NAME
+        type: basic
+        valueFrom:
+          configMapKeyRef:
+            name: '{{ .Values.prBranchName }}'
+            key: user_name
+      ENVIRONMENT:
+        name: ENVIRONMENT
+        type: basic
+        valueFrom:
+          configMapKeyRef:
+            name: '{{ .Values.prBranchName }}'
+            key: environment

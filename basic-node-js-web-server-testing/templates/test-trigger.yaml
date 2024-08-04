@@ -1,0 +1,26 @@
+apiVersion: tests.testkube.io/v1
+kind: TestTrigger
+metadata:
+  name: '{{ .Values.prBranchName }}-pr-testtrigger-example'
+  namespace: testkube
+spec:
+  resource: deployment
+  resourceSelector:
+    namespace: '{{ .Values.prBranchName }}-apps'
+    name: basic-node-web-server-deployment
+  event: created
+  conditionSpec:
+    timeout: 100
+    delay: 2
+    conditions:
+      - type: Progressing
+        status: 'True'
+        reason: 'NewReplicaSetAvailable'
+        ttl: 60
+      - type: Available
+        status: 'True'
+  action: run
+  execution: test
+  testSelector:
+    name: '{{ .Values.prBranchName }}-playwright-testing'
+    namespace: testkube
